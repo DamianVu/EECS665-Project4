@@ -1,0 +1,17 @@
+*.swp
+*.o
+*.output
+test.out
+location.hh
+position.hh
+stack.hh
+mc_lexer.yy.cc
+mc_parser.output
+mc_parser.tab.cc
+mc_parser.tab.hh
+my_wc
+build*/
+P4
+grammar.hh
+lilc_lexer.yy.cc
+lilc_parser.cc
