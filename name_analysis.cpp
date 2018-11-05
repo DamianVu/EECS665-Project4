@@ -3,6 +3,9 @@
 
 namespace LILC{
 
+// TODO:
+// 	Need to add error checking
+
 bool ASTNode::nameAnalysis(SymbolTable * symTab){
 	std::cout << "[DELETE ME] Whoops, I'm the ASTNode"
 		" base class nameAnalysis function."
@@ -13,6 +16,7 @@ bool ASTNode::nameAnalysis(SymbolTable * symTab){
 }
 
 bool ProgramNode::nameAnalysis(SymbolTable * symTab){
+	symTab->addScope();
 	this->myDeclList->nameAnalysis(symTab);
 }
 
@@ -28,20 +32,31 @@ bool DeclListNode::nameAnalysis(SymbolTable * symTab){
 }
 
 bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
-	std::cout << "[DELETE ME] I'm a varDecl. "
-		" you should add the information from my"
-		" subtree to the to the symbol table"
-		" as a new entry in the current scope table\n";
+	symTab->addItem(myId->getId(), myType->getType());
 	return true;
 }
 
 bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
-	std::cout << "[DELETE ME] I'm a fnDecl. "
-		" you should add my information to"
-		" the current scope table.\n";
-		" you should also add and make current"
-		" a new scope table for my body\n";
+	// If function is not multiply declared
+	symTab->addItem(myId->getId(), myType->getType());
+	symTab->addScope();
+	// Process formals
+	myFormals->nameAnalysis(symTab);
+	myBody->nameAnalysis(symTab);
+	symTab->dropScope();
 	return true;
+}
+
+bool FormalsListNode::nameAnalysis(SymbolTable * symTab) {
+
+}
+
+bool FormalDeclNode::nameAnalysis(SymbolTable * symTab) {
+
+}
+
+bool FnBodyNode::nameAnalysis(SymbolTable * symTab) {
+	myDeclList->nameAnalysis(symTab);
 }
 
 } // End namespace LIL' C

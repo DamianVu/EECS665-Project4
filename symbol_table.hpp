@@ -9,6 +9,13 @@ namespace LILC{
 class SymbolTableEntry{
 	//TODO: Add type, kind, etc. instance variables
 	//TODO: add getters/setters for type, kind, etc.
+public:
+	void setType(std::string type) {
+		myType = type;
+	}
+	std::string getType() { return myType; }
+private:
+	std::string myType;
 };
 
 //A single 
@@ -19,6 +26,9 @@ class ScopeTable{
 		// and/or returning information to indicate
 		// that the symbol does not exist within 
 		// the current scope
+		bool findByName(std::string name);
+		bool addItem(std::string id, std::string type);
+		void printAll(); // Debug method
 	private:
 		std::unordered_map<std::string, SymbolTableEntry *>* map;
 };
@@ -26,12 +36,18 @@ class ScopeTable{
 class SymbolTable{
 	public:
 		SymbolTable();
-		//TODO: add functions to create a new scope
-		// table when a new scope is entered, 
-		// drop a scope table when a scope is finished,
-		// etc.
+		void addScope();
+		void dropScope();
+		bool addItem(std::string id, std::string type);
+		bool findByName(std::string name);
+		void reportError(std::string message);
+		void printAll(); // Debug method
+		void addLine(int lines);
+		void addChar(int chars);
 	private:
 		std::list<ScopeTable *> * scopeTables;
+		int line;
+		int charPos;
 };
 
 }
