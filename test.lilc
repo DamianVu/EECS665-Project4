@@ -1,6 +1,5 @@
 int glob;
-int main(){
-	int a;
-	b = a;
+bool glob;
+int glob(int b, int c) {
+	
 }
-

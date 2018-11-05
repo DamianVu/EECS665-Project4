@@ -23,6 +23,7 @@ bool ScopeTable::addItem(std::string id, std::string type) {
 		temp->setType(type);
 		map->insert({{id, temp}});
 		temp = nullptr;
+		return true;
 	} else {
 		// maybe put an error...
 		return false;
@@ -31,8 +32,6 @@ bool ScopeTable::addItem(std::string id, std::string type) {
 
 SymbolTable::SymbolTable(){
 	scopeTables = new std::list<ScopeTable *>();
-	line = 0;
-	charPos = 0;
 };
 
 void SymbolTable::addScope() {
@@ -66,13 +65,28 @@ void SymbolTable::printAll() {
 	}
 }
 
-void SymbolTable::addLine(int lines) {
-	line += lines;
+void SymbolTable::multiplyDeclaredId(char f) {
+	std::cerr << "Multiply declared identifier: " << f << "\n";
 }
 
-void SymbolTable::addChar(int chars) {
-	charPos += chars;
+void SymbolTable::undeclaredId(char f) {
+	std::cerr << "Undeclared identifier: " << f << "\n";
 }
 
+void SymbolTable::dotAccess(char f) {
+	std::cerr << "Dot-access of non-struct type: " << f << "\n";
+}
+
+void SymbolTable::invalidStructField(char f) {
+	std::cerr << "Invalid struct field name: " << f << "\n";
+}
+
+void SymbolTable::nonFunctionVoid(char f) {
+	std::cerr << "Non-function declared void: " << f << "\n";
+}
+
+void SymbolTable::invalidStructName(char f) {
+	std::cerr << "Invalid name of struct type: " << f << "\n";
+}
 
 }

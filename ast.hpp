@@ -177,7 +177,9 @@ private:
 class TypeNode : public ASTNode{
 public:
 	virtual void unparse(std::ostream& out, int indent) = 0;
-	virtual std::string getType() = 0;
+	virtual std::string getType() {
+		return "???";
+	}
 };
 
 class IntNode : public TypeNode{

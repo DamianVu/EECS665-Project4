@@ -18,6 +18,7 @@ bool ASTNode::nameAnalysis(SymbolTable * symTab){
 bool ProgramNode::nameAnalysis(SymbolTable * symTab){
 	symTab->addScope();
 	this->myDeclList->nameAnalysis(symTab);
+	symTab->dropScope();
 }
 
 bool DeclListNode::nameAnalysis(SymbolTable * symTab){
@@ -32,13 +33,23 @@ bool DeclListNode::nameAnalysis(SymbolTable * symTab){
 }
 
 bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
-	symTab->addItem(myId->getId(), myType->getType());
+	if (symTab->findByName(myId->getId())) {
+		symTab->multiplyDeclaredId(myId->getId().at(0));
+	} else if (myType->getType() == "void") {
+		symTab->nonFunctionVoid(myId->getId().at(0));
+	} else {
+		symTab->addItem(myId->getId(), myType->getType());
+	}
 	return true;
 }
 
 bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
 	// If function is not multiply declared
-	symTab->addItem(myId->getId(), myType->getType());
+	if (symTab->findByName(myId->getId())) {
+		symTab->multiplyDeclaredId(myId->getId().at(0));
+	} else {
+		symTab->addItem(myId->getId(), myType->getType());
+	}
 	symTab->addScope();
 	// Process formals
 	myFormals->nameAnalysis(symTab);
@@ -48,7 +59,7 @@ bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
 }
 
 bool FormalsListNode::nameAnalysis(SymbolTable * symTab) {
-
+	
 }
 
 bool FormalDeclNode::nameAnalysis(SymbolTable * symTab) {

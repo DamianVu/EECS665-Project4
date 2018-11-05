@@ -44,10 +44,14 @@ class SymbolTable{
 		void printAll(); // Debug method
 		void addLine(int lines);
 		void addChar(int chars);
+		void multiplyDeclaredId(char f);
+		void undeclaredId(char f);
+		void dotAccess(char f);
+		void invalidStructField(char f);
+		void nonFunctionVoid(char f);
+		void invalidStructName(char f);
 	private:
 		std::list<ScopeTable *> * scopeTables;
-		int line;
-		int charPos;
 };
 
 }
