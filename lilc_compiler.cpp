@@ -212,4 +212,5 @@ LILC::LilC_Compiler::nameAnalysis( const char * const infile, const char * const
 	this->astRoot->nameAnalysis(symbolTable);
 
 	std::ofstream out(outfile);
+	this->astRoot->unparse(out, 0);
 }
