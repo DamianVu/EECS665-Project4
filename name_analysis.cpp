@@ -180,4 +180,34 @@ bool DotAccessNode::nameAnalysis(SymbolTable * symTab) {
 	return true;
 }
 
+bool IfStmtNode::nameAnalysis(SymbolTable * symTab) {
+	myExp->nameAnalysis(symTab);
+	symTab->addScope();
+	myDecls->nameAnalysis(symTab);
+	myStmts->nameAnalysis(symTab);
+	symTab->dropScope();
+}
+
+
+bool IfElseStmtNode::nameAnalysis(SymbolTable * symTab) {
+	myExp->nameAnalysis(symTab);
+	symTab->addScope();
+	myDeclsT->nameAnalysis(symTab);
+	myStmtsT->nameAnalysis(symTab);
+	symTab->dropScope();
+	symTab->addScope();
+	myDeclsF->nameAnalysis(symTab);
+	myStmtsF->nameAnalysis(symTab);
+	symTab->dropScope();
+}
+
+
+bool WhileStmtNode::nameAnalysis(SymbolTable * symTab){
+	myExp->nameAnalysis(symTab);
+	symTab->addScope();
+	myDecls->nameAnalysis(symTab);
+	myStmts->nameAnalysis(symTab);
+	symTab->dropScope();
+}
+
 } // End namespace LIL' C

@@ -7,5 +7,12 @@ struct f {
 struct f b;
 
 int main() {
-	b.a = b.c;
+	c--;
+	input >> a;
+	output << d;
+	while (a) {
+		int y;
+		x++;
+		y++;
+	}
 }

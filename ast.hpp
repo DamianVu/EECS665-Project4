@@ -126,6 +126,11 @@ public:
 	ExpListNode(std::list<ExpNode *> * exps) : ASTNode(){
 		myExps = *exps;
 	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		for (ExpNode * exp : myExps) {
+			exp->nameAnalysis(symTab);
+		}
+	}
 	void unparse(std::ostream& out, int indent);
 private:
 	std::list<ExpNode *> myExps;
@@ -313,6 +318,10 @@ public:
 		myId = id;
 		myExpList = expList;
 	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myId->nameAnalysis(symTab);
+		myExpList->nameAnalysis(symTab);
+	}
 	void unparse(std::ostream& out, int indent);
 private:
 	IdNode * myId;
@@ -329,6 +338,9 @@ public:
 	UnaryMinusNode(ExpNode * exp): UnaryExpNode(){
 		myExp = exp;
 	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp->nameAnalysis(symTab);
+	}
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp;
@@ -339,6 +351,9 @@ public:
 	NotNode(ExpNode * exp): UnaryExpNode(){
 		myExp = exp;
 	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp->nameAnalysis(symTab);
+	}
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp;
@@ -347,6 +362,7 @@ private:
 class BinaryExpNode : public ExpNode{
 public:
 	virtual void unparse(std::ostream& out, int indent) = 0;
+	virtual bool nameAnalysis(SymbolTable * symTab) = 0;
 };
 
 class PlusNode : public BinaryExpNode{
@@ -354,6 +370,10 @@ public:
 	PlusNode(ExpNode * exp1, ExpNode * exp2): BinaryExpNode(){
 		myExp1 = exp1;
 		myExp2 = exp2;
+	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp1->nameAnalysis(symTab);
+		myExp2->nameAnalysis(symTab);
 	}
 	void unparse(std::ostream& out, int indent);
 private:
@@ -367,6 +387,10 @@ public:
 		myExp1 = exp1;
 		myExp2 = exp2;
 	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp1->nameAnalysis(symTab);
+		myExp2->nameAnalysis(symTab);
+	}
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp1;
@@ -378,6 +402,10 @@ public:
 	TimesNode(ExpNode * exp1, ExpNode * exp2): BinaryExpNode(){
 		myExp1 = exp1;
 		myExp2 = exp2;
+	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp1->nameAnalysis(symTab);
+		myExp2->nameAnalysis(symTab);
 	}
 	void unparse(std::ostream& out, int indent);
 private:
@@ -391,6 +419,10 @@ public:
 		myExp1 = exp1;
 		myExp2 = exp2;
 	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp1->nameAnalysis(symTab);
+		myExp2->nameAnalysis(symTab);
+	}
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp1;
@@ -402,6 +434,10 @@ public:
 	AndNode(ExpNode * exp1, ExpNode * exp2): BinaryExpNode(){
 		myExp1 = exp1;
 		myExp2 = exp2;
+	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp1->nameAnalysis(symTab);
+		myExp2->nameAnalysis(symTab);
 	}
 	void unparse(std::ostream& out, int indent);
 private:
@@ -415,6 +451,10 @@ public:
 		myExp1 = exp1;
 		myExp2 = exp2;
 	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp1->nameAnalysis(symTab);
+		myExp2->nameAnalysis(symTab);
+	}
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp1;
@@ -426,6 +466,10 @@ public:
 	EqualsNode(ExpNode * exp1, ExpNode * exp2): BinaryExpNode(){
 		myExp1 = exp1;
 		myExp2 = exp2;
+	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp1->nameAnalysis(symTab);
+		myExp2->nameAnalysis(symTab);
 	}
 	void unparse(std::ostream& out, int indent);
 private:
@@ -439,6 +483,10 @@ public:
 		myExp1 = exp1;
 		myExp2 = exp2;
 	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp1->nameAnalysis(symTab);
+		myExp2->nameAnalysis(symTab);
+	}
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp1;
@@ -450,6 +498,10 @@ public:
 	LessNode(ExpNode * exp1, ExpNode * exp2): BinaryExpNode(){
 		myExp1 = exp1;
 		myExp2 = exp2;
+	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp1->nameAnalysis(symTab);
+		myExp2->nameAnalysis(symTab);
 	}
 	void unparse(std::ostream& out, int indent);
 private:
@@ -463,6 +515,10 @@ public:
 		myExp1 = exp1;
 		myExp2 = exp2;
 	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp1->nameAnalysis(symTab);
+		myExp2->nameAnalysis(symTab);
+	}
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp1;
@@ -475,6 +531,10 @@ public:
 		myExp1 = exp1;
 		myExp2 = exp2;
 	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp1->nameAnalysis(symTab);
+		myExp2->nameAnalysis(symTab);
+	}
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp1;
@@ -486,6 +546,10 @@ public:
 	GreaterEqNode(ExpNode * exp1, ExpNode * exp2): BinaryExpNode(){
 		myExp1 = exp1;
 		myExp2 = exp2;
+	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp1->nameAnalysis(symTab);
+		myExp2->nameAnalysis(symTab);
 	}
 	void unparse(std::ostream& out, int indent);
 private:
@@ -509,6 +573,9 @@ public:
 	PostIncStmtNode(ExpNode * exp): StmtNode(){
 		myExp = exp;
 	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp->nameAnalysis(symTab);
+	}
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp;
@@ -518,6 +585,9 @@ class PostDecStmtNode : public StmtNode{
 public:
 	PostDecStmtNode(ExpNode * exp): StmtNode(){
 		myExp = exp;
+	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp->nameAnalysis(symTab);
 	}
 	void unparse(std::ostream& out, int indent);
 private:
@@ -529,6 +599,9 @@ public:
 	ReadStmtNode(ExpNode * exp): StmtNode(){
 		myExp = exp;
 	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp->nameAnalysis(symTab);
+	}
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp;
@@ -538,6 +611,9 @@ class WriteStmtNode : public StmtNode{
 public:
 	WriteStmtNode(ExpNode * exp): StmtNode(){
 		myExp = exp;
+	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp->nameAnalysis(symTab);
 	}
 	void unparse(std::ostream& out, int indent);
 private:
@@ -553,6 +629,7 @@ public:
 		myDecls = decls;
 		myStmts = stmts;
 	}
+	bool nameAnalysis(SymbolTable * symTab);
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp;
@@ -572,6 +649,7 @@ public:
 		myDeclsF = declsF;
 		myStmtsF = stmtsF;
 	}
+	bool nameAnalysis(SymbolTable * symTab);
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp;
@@ -589,6 +667,7 @@ public:
 		myDecls = decls;
 		myStmts = stmts;
 	}
+	bool nameAnalysis(SymbolTable * symTab);
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp;
@@ -601,6 +680,9 @@ public:
 	CallStmtNode(CallExpNode * callExp): StmtNode(){
 		myCallExp = callExp;
 	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myCallExp->nameAnalysis(symTab);
+	}
 	void unparse(std::ostream& out, int indent);
 private:
 	CallExpNode * myCallExp;
@@ -610,6 +692,9 @@ class ReturnStmtNode : public StmtNode{
 public:
 	ReturnStmtNode(ExpNode * exp): StmtNode(){
 		myExp = exp;
+	}
+	bool nameAnalysis(SymbolTable * symTab) {
+		myExp->nameAnalysis(symTab);
 	}
 	void unparse(std::ostream& out, int indent);
 private:
