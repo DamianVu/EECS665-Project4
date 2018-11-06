@@ -17,11 +17,6 @@ bool ASTNode::nameAnalysis(SymbolTable * symTab){
 }
 
 bool ExpNode::nameAnalysis(SymbolTable * symTab) {
-	std::cout << "[DELETE ME] Whoops, I'm the ExpNode"
-		" base class nameAnalysis function."
-		" I should have been overridden."
-		" My function declaration should have"
-		" probably even been pure virtual.\n";
 	return true;
 }
 
@@ -29,6 +24,7 @@ bool ProgramNode::nameAnalysis(SymbolTable * symTab){
 	symTab->addScope();
 	this->myDeclList->nameAnalysis(symTab);
 	symTab->dropScope();
+	return true;
 }
 
 bool DeclListNode::nameAnalysis(SymbolTable * symTab){
@@ -40,6 +36,7 @@ bool DeclListNode::nameAnalysis(SymbolTable * symTab){
 	  DeclNode * elt = *it;
 	  result = result && elt->nameAnalysis(symTab);
 	}
+	return result;
 }
 
 bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
@@ -69,8 +66,10 @@ bool StructDeclNode::nameAnalysis(SymbolTable * symTab) {
 		symTab->multiplyDeclaredId(myId->getId().at(0));
 		return false;
 	} else {
-		std::list<std::string> list = myDeclList->getDeclIds();
-		symTab->addStruct(myId->getId(), list);
+		std::list<std::string> listIds = myDeclList->getDeclIds();
+		std::list<std::string> listTypes = myDeclList->getDeclTypes();
+		symTab->addStruct(myId->getId(), listIds, listTypes);
+		return true;
 	}
 }
 
@@ -93,6 +92,7 @@ bool FormalsListNode::nameAnalysis(SymbolTable * symTab) {
 	for (FormalDeclNode * formal : *myFormals) {
 		formal->nameAnalysis(symTab);
 	}
+	return true;
 }
 
 bool FormalDeclNode::nameAnalysis(SymbolTable * symTab) {
@@ -112,12 +112,14 @@ bool FormalDeclNode::nameAnalysis(SymbolTable * symTab) {
 bool FnBodyNode::nameAnalysis(SymbolTable * symTab) {
 	myDeclList->nameAnalysis(symTab);
 	myStmtList->nameAnalysis(symTab);
+	return true;
 }
 
 bool StmtListNode::nameAnalysis(SymbolTable * symTab) {
 	for (StmtNode * stmt : *myStmts) {
 		stmt->nameAnalysis(symTab);
 	}
+	return true;
 }
 
 bool StmtNode::nameAnalysis(SymbolTable * symTab) {
@@ -131,15 +133,19 @@ bool StmtNode::nameAnalysis(SymbolTable * symTab) {
 
 bool AssignStmtNode::nameAnalysis(SymbolTable * symTab) {
 	myAssign->nameAnalysis(symTab);
+	return true;
 }
 
 
 // Exp Node Analysis
 
 bool IdNode::nameAnalysis(SymbolTable * symTab) {
-
 	if (!symTab->findByName(myStrVal)) {
 		symTab->undeclaredId(myStrVal.at(0));
+		return false;
+	} else {
+		outputType = symTab->getTypeOf(myStrVal);
+		return true;
 	}
 }
 
@@ -148,6 +154,7 @@ bool AssignNode::nameAnalysis(SymbolTable * symTab) {
 	// TODO: Fill in struct access assignment
 	myExpLHS->nameAnalysis(symTab);
 	myExpRHS->nameAnalysis(symTab);
+	return true;
 }
 
 bool DotAccessNode::nameAnalysis(SymbolTable * symTab) {
@@ -169,6 +176,9 @@ bool DotAccessNode::nameAnalysis(SymbolTable * symTab) {
 				if (!symTab->structListContains(structId, accessId)) {
 					symTab->invalidStructField(accessId.at(0));
 				}
+				IdNode * temp = (IdNode *) myExp;
+				temp->setOutputType(structId);
+				myId->setOutputType(symTab->getAccessType(structId, accessId));
 			}
 		} else {
 			symTab->undeclaredId(id.at(0));
@@ -186,6 +196,7 @@ bool IfStmtNode::nameAnalysis(SymbolTable * symTab) {
 	myDecls->nameAnalysis(symTab);
 	myStmts->nameAnalysis(symTab);
 	symTab->dropScope();
+	return true;
 }
 
 
@@ -199,6 +210,7 @@ bool IfElseStmtNode::nameAnalysis(SymbolTable * symTab) {
 	myDeclsF->nameAnalysis(symTab);
 	myStmtsF->nameAnalysis(symTab);
 	symTab->dropScope();
+	return true;
 }
 
 
@@ -208,6 +220,7 @@ bool WhileStmtNode::nameAnalysis(SymbolTable * symTab){
 	myDecls->nameAnalysis(symTab);
 	myStmts->nameAnalysis(symTab);
 	symTab->dropScope();
+	return true;
 }
 
 } // End namespace LIL' C

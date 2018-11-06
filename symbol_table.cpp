@@ -27,6 +27,11 @@ std::string ScopeTable::getStructName(std::string id) {
 	return got->second->getStructId();
 }
 
+std::string ScopeTable::getAccessType(std::string structId, std::string accessId) {
+	std::unordered_map<std::string,SymbolTableEntry *>::const_iterator got = map->find (structId);
+	return got->second->getTypeOfStructAccess(accessId);
+}
+
 bool ScopeTable::addItem(std::string id, std::string type) {
 	if (map->count(id) == 0) {
 		SymbolTableEntry * temp = new SymbolTableEntry();
@@ -40,11 +45,12 @@ bool ScopeTable::addItem(std::string id, std::string type) {
 	}
 }
 
-bool ScopeTable::addStruct(std::string id, std::list<std::string> list) {
+bool ScopeTable::addStruct(std::string id, std::list<std::string> list, std::list<std::string> list2) {
 	if (map->count(id) == 0) {
 		SymbolTableEntry * temp = new SymbolTableEntry();
 		temp->setType("struct");
 		temp->setStructDecls(list);
+		temp->setStructTypes(list2);
 		map->insert({{id, temp}});
 		temp = nullptr;
 		return true;
@@ -87,8 +93,8 @@ bool SymbolTable::addItem(std::string id, std::string type) {
 	return scopeTables->back()->addItem(id, type);
 }
 
-bool SymbolTable::addStruct(std::string id, std::list<std::string> list) {
-	return scopeTables->back()->addStruct(id, list);
+bool SymbolTable::addStruct(std::string id, std::list<std::string> list, std::list<std::string> list2) {
+	return scopeTables->back()->addStruct(id, list, list2);
 }
 
 bool SymbolTable::addStructUsage(std::string id, std::string type, std::string structId) {
@@ -108,6 +114,10 @@ std::string SymbolTable::getTypeOf(std::string id) {
 
 std::string SymbolTable::getStructName(std::string id) {
 	return getTableContaining(id)->getStructName(id);
+}
+
+std::string SymbolTable::getAccessType(std::string structId, std::string accessId) {
+	return getTableContaining(structId)->getAccessType(structId, accessId);
 }
 
 bool SymbolTable::structListContains(std::string structId, std::string accessId) {

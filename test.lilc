@@ -1,18 +1,16 @@
 
-struct f {
+int a;
+int b;
+struct Point {
 	int a;
 	int b;
+	bool c;
 };
 
-struct f b;
-
 int main() {
-	c--;
-	input >> a;
-	output << d;
-	while (a) {
-		int y;
-		x++;
-		y++;
-	}
+	struct Point dog;
+	a = b;
+	dog.a = 5;
+	dog.b = 6;
+	dog.c = true;
 }

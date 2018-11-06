@@ -18,6 +18,10 @@ public:
 		structDecls = decls;
 	}
 	std::list<std::string> getStructDecls() { return structDecls; }
+	void setStructTypes(std::list<std::string> decls) {
+		structTypes = decls;
+	}
+	std::list<std::string> getStructTypes() { return structTypes; }
 	void setStructId(std::string id) {
 		structId = id;
 	}
@@ -28,9 +32,24 @@ public:
 		}
 		return false;
 	}
+	std::string getTypeOfStructAccess(std::string accessId) {
+		int count = 0;
+		for (std::string s : structDecls) {
+			if (s == accessId) break;
+			count++;
+		}
+		int temp = 0;
+		for (std::string s : structTypes) {
+			if (temp == count)
+				return s;
+			temp++;
+		}
+		return "MESSED UP";
+	}
 private:
 	std::string myType;
 	std::list<std::string> structDecls;
+	std::list<std::string> structTypes;
 	std::string structId;
 };
 
@@ -45,8 +64,9 @@ class ScopeTable{
 		bool findByName(std::string name);
 		std::string getTypeOf(std::string id);
 		std::string getStructName(std::string id);
+		std::string getAccessType(std::string structId, std::string accessId);
 		bool addItem(std::string id, std::string type);
-		bool addStruct(std::string id, std::list<std::string> list);
+		bool addStruct(std::string id, std::list<std::string> list, std::list<std::string> list2);
 		bool addStructUsage(std::string id, std::string type, std::string structId);
 		bool structListContains(std::string structId, std::string accessId);
 		void printAll(); // Debug method
@@ -60,11 +80,12 @@ class SymbolTable{
 		void addScope();
 		void dropScope();
 		bool addItem(std::string id, std::string type);
-		bool addStruct(std::string id, std::list<std::string> list);
+		bool addStruct(std::string id, std::list<std::string> list, std::list<std::string> list2);
 		bool addStructUsage(std::string id, std::string type, std::string structId);
 		bool findByName(std::string name);
 		std::string getTypeOf(std::string id);
 		std::string getStructName(std::string id);
+		std::string getAccessType(std::string structId, std::string accessId);
 		bool structListContains(std::string structId, std::string accessId);
 		void reportError(std::string message);
 		void printAll(); // Debug method
