@@ -18,9 +18,20 @@ public:
 		structDecls = decls;
 	}
 	std::list<std::string> getStructDecls() { return structDecls; }
+	void setStructId(std::string id) {
+		structId = id;
+	}
+	std::string getStructId() { return structId; }
+	bool structListContains(std::string accessId) {
+		for (std::string s : structDecls) {
+			if (s == accessId) return true;
+		}
+		return false;
+	}
 private:
 	std::string myType;
 	std::list<std::string> structDecls;
+	std::string structId;
 };
 
 //A single 
@@ -33,8 +44,11 @@ class ScopeTable{
 		// the current scope
 		bool findByName(std::string name);
 		std::string getTypeOf(std::string id);
+		std::string getStructName(std::string id);
 		bool addItem(std::string id, std::string type);
 		bool addStruct(std::string id, std::list<std::string> list);
+		bool addStructUsage(std::string id, std::string type, std::string structId);
+		bool structListContains(std::string structId, std::string accessId);
 		void printAll(); // Debug method
 	private:
 		std::unordered_map<std::string, SymbolTableEntry *>* map;
@@ -47,8 +61,11 @@ class SymbolTable{
 		void dropScope();
 		bool addItem(std::string id, std::string type);
 		bool addStruct(std::string id, std::list<std::string> list);
+		bool addStructUsage(std::string id, std::string type, std::string structId);
 		bool findByName(std::string name);
 		std::string getTypeOf(std::string id);
+		std::string getStructName(std::string id);
+		bool structListContains(std::string structId, std::string accessId);
 		void reportError(std::string message);
 		void printAll(); // Debug method
 		void addLine(int lines);

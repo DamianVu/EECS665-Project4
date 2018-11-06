@@ -209,6 +209,9 @@ public:
 	virtual std::string getType() {
 		return "???";
 	}
+	virtual std::string getId() {
+		return "???";
+	}
 };
 
 class IntNode : public TypeNode{
@@ -239,6 +242,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	std::string getType() { return "struct"; }
+	std::string getId() { return myId->getId(); }
 private:
 	IdNode * myId;
 };

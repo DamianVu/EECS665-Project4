@@ -1,5 +1,6 @@
 #include "ast.hpp"
 #include "symbol_table.hpp"
+#include <algorithm>
 
 namespace LILC{
 
@@ -42,10 +43,21 @@ bool DeclListNode::nameAnalysis(SymbolTable * symTab){
 }
 
 bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
-	if (symTab->findByName(myId->getId())) {
-		symTab->multiplyDeclaredId(myId->getId().at(0));
-	} else if (myType->getType() == "void") {
+	if (myType->getType() == "void") {
 		symTab->nonFunctionVoid(myId->getId().at(0));
+		if (symTab->findByName(myId->getId())) {
+			symTab->multiplyDeclaredId(myId->getId().at(0));
+		}
+	} else if (symTab->findByName(myId->getId())) {
+		symTab->multiplyDeclaredId(myId->getId().at(0));
+	} else if (myType->getType() == "struct") {
+		std::string structId = myType->getId();
+		// Verify this is a struct type in our scope table
+		if (symTab->findByName(structId) && symTab->getTypeOf(structId) == "struct") {
+			symTab->addStructUsage(myId->getId(), "structUsage", structId);
+		} else {
+			symTab->invalidStructName(structId.at(0));
+		}
 	} else {
 		symTab->addItem(myId->getId(), myType->getType());
 	}
@@ -84,10 +96,13 @@ bool FormalsListNode::nameAnalysis(SymbolTable * symTab) {
 }
 
 bool FormalDeclNode::nameAnalysis(SymbolTable * symTab) {
-	if (symTab->findByName(myId->getId())) {
-		symTab->multiplyDeclaredId(myId->getId().at(0));
-	} else if (myType->getType() == "void") {
+	if (myType->getType() == "void") {
 		symTab->nonFunctionVoid(myId->getId().at(0));
+		if (symTab->findByName(myId->getId())) {
+			symTab->multiplyDeclaredId(myId->getId().at(0));
+		}
+	} else if (symTab->findByName(myId->getId())) {
+		symTab->multiplyDeclaredId(myId->getId().at(0));
 	} else {
 		symTab->addItem(myId->getId(), myType->getType());
 	}
@@ -122,6 +137,7 @@ bool AssignStmtNode::nameAnalysis(SymbolTable * symTab) {
 // Exp Node Analysis
 
 bool IdNode::nameAnalysis(SymbolTable * symTab) {
+
 	if (!symTab->findByName(myStrVal)) {
 		symTab->undeclaredId(myStrVal.at(0));
 	}
@@ -135,13 +151,33 @@ bool AssignNode::nameAnalysis(SymbolTable * symTab) {
 }
 
 bool DotAccessNode::nameAnalysis(SymbolTable * symTab) {
+	// Left side HAS to be a struct access
 	if (myExp->getType() == "id") {
-		symTab->dotAccess(myExp->getId().at(0));
-		return false;
-	} else {
-	}
+		std::string id = myExp->getId();
+		if (id == "uhoh") {
+			std::cout << "\n\nDammit damian....\n\n";
+			return false;
+		}
+		if (symTab->findByName(id)) {
+			// Make sure it is of structUsage type
+			if (!(symTab->getTypeOf(id) == "structUsage")) {
+				symTab->dotAccess(id.at(0));
+			} else {
+				// Check RHS of struct usage
+				std::string structId = symTab->getStructName(id);
+				std::string accessId = myId->getId();
+				if (!symTab->structListContains(structId, accessId)) {
+					symTab->invalidStructField(accessId.at(0));
+				}
+			}
+		} else {
+			symTab->undeclaredId(id.at(0));
+		}
 
-	return myExp->nameAnalysis(symTab);
+	} else {
+		// ??? Idk what would cause this.
+	}
+	return true;
 }
 
 } // End namespace LIL' C
