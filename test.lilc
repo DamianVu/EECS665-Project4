@@ -1,5 +1,13 @@
 int glob;
 bool glob;
-int glob(int b, int c) {
-	
+int glob(int b, int glob) {
+	a = b;
+}
+struct f {
+	int a;
+	int b;	
+};
+void g() {
+	struct f s;
+	s.a = 5;
 }

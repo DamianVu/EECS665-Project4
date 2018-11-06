@@ -17,6 +17,11 @@ bool ScopeTable::findByName(std::string name) {
 	return (map->count(name) > 0);
 }
 
+std::string ScopeTable::getTypeOf(std::string id) {
+	std::unordered_map<std::string,SymbolTableEntry *>::const_iterator got = map->find (id);
+	return got->second->getType();
+}
+
 bool ScopeTable::addItem(std::string id, std::string type) {
 	if (map->count(id) == 0) {
 		SymbolTableEntry * temp = new SymbolTableEntry();
@@ -26,6 +31,19 @@ bool ScopeTable::addItem(std::string id, std::string type) {
 		return true;
 	} else {
 		// maybe put an error...
+		return false;
+	}
+}
+
+bool ScopeTable::addStruct(std::string id, std::list<std::string> list) {
+	if (map->count(id) == 0) {
+		SymbolTableEntry * temp = new SymbolTableEntry();
+		temp->setType("struct");
+		temp->setStructDecls(list);
+		map->insert({{id, temp}});
+		temp = nullptr;
+		return true;
+	} else {
 		return false;
 	}
 }
@@ -46,11 +64,26 @@ bool SymbolTable::addItem(std::string id, std::string type) {
 	return scopeTables->back()->addItem(id, type);
 }
 
+bool SymbolTable::addStruct(std::string id, std::list<std::string> list) {
+	return scopeTables->back()->addStruct(id, list);
+}
+
 bool SymbolTable::findByName(std::string name) {
 	for (ScopeTable* table: *scopeTables) {
 		if (table->findByName(name)) return true;
 	}
 	return false;
+}
+
+std::string SymbolTable::getTypeOf(std::string id) {
+	return getTableContaining(id)->getTypeOf(id);
+}
+
+ScopeTable * SymbolTable::getTableContaining(std::string id) {
+	for (ScopeTable* table: *scopeTables) {
+		if (table->findByName(id)) return table;
+	}
+	return nullptr; // Hopefully never happens
 }
 
 void SymbolTable::reportError(std::string message) {

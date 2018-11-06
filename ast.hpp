@@ -40,20 +40,32 @@ private:
 	DeclListNode * myDeclList;
 };
 
-class DeclListNode : public ASTNode{
-public:
-	DeclListNode(std::list<DeclNode *> * decls) : ASTNode(){
-        	myDecls = decls;
-	}
-	bool nameAnalysis(SymbolTable * symTab);
-	void unparse(std::ostream& out, int indent);
-private:
-	std::list<DeclNode *> * myDecls;
-};
 
 class DeclNode : public ASTNode{
 public:
 	virtual void unparse(std::ostream& out, int indent) = 0;
+	virtual std::string getId() { return "DECLNODE"; }
+};
+
+class ExpNode : public ASTNode{
+public:
+	virtual void unparse(std::ostream& out, int indent) = 0;
+	virtual bool nameAnalysis(SymbolTable * symTab);
+	virtual std::string getType() { return "uhoh"; }
+	virtual std::string getId() { return "uhoh"; }
+};
+
+class IdNode : public ExpNode{
+public:
+	IdNode(IDToken * token) : ExpNode(){
+		myStrVal = token->value();
+	}
+	bool nameAnalysis(SymbolTable * symTab);
+	void unparse(std::ostream& out, int indent);
+	std::string getType() { return "id"; }
+	std::string getId() { return myStrVal; }
+private:
+	std::string myStrVal;
 };
 
 class VarDeclNode : public DeclNode{
@@ -63,6 +75,7 @@ public:
 		myId = id;
 		mySize = size;
 	}
+	std::string getId() { return myId->getId(); }
 	bool nameAnalysis(SymbolTable * symTab);
 	void unparse(std::ostream& out, int indent);
 	static const int NOT_STRUCT = -1; //Use this value for mySize
@@ -73,14 +86,28 @@ private:
 	int mySize;
 };
 
-class ExpNode : public ASTNode{
+class DeclListNode : public ASTNode{
 public:
-	virtual void unparse(std::ostream& out, int indent) = 0;
+	DeclListNode(std::list<DeclNode *> * decls) : ASTNode(){
+        	myDecls = decls;
+	}
+	std::list<std::string> getDeclIds() {
+		std::list<std::string> list;
+		for (DeclNode * decl : *myDecls) {
+			list.push_back(decl->getId());
+		}
+		return list;
+	}
+	bool nameAnalysis(SymbolTable * symTab);
+	void unparse(std::ostream& out, int indent);
+private:
+	std::list<DeclNode *> * myDecls;
 };
 
 class StmtNode : public ASTNode{
 public:
 	virtual void unparse(std::ostream& out, int indent) = 0;
+	virtual bool nameAnalysis(SymbolTable * symTab);
 };
 
 class FormalsListNode : public ASTNode{
@@ -109,6 +136,7 @@ public:
 	StmtListNode(std::list<StmtNode *> * stmtsIn) : ASTNode(){
 		myStmts = stmtsIn;
 	}
+	bool nameAnalysis(SymbolTable * symTab);
 	void unparse(std::ostream& out, int indent);
 private:
 	std::list<StmtNode *> * myStmts;
@@ -165,6 +193,7 @@ public:
 		myId = id;
 		myDeclList = decls;
 	}
+	bool nameAnalysis(SymbolTable * symTab);
 	void unparse(std::ostream& out, int indent);
 	static const int NOT_STRUCT = -1; //Use this value for mySize
 					  // if this is not a struct type
@@ -234,17 +263,6 @@ private:
 	 std::string myString;
 };
 
-class IdNode : public ExpNode{
-public:
-	IdNode(IDToken * token) : ExpNode(){
-		myStrVal = token->value();
-	}
-	void unparse(std::ostream& out, int indent);
-	std::string getId() { return myStrVal; }
-private:
-	std::string myStrVal;
-};
-
 class TrueNode : public ExpNode{
 public:
 	TrueNode(): ExpNode(){ }
@@ -264,6 +282,8 @@ public:
 		myExp = exp;
 		myId = id;
 	}
+	bool nameAnalysis(SymbolTable * symTab);
+	std::string getType() { return "dot"; }
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExp;
@@ -276,6 +296,7 @@ public:
 		myExpLHS = expLHS;
 		myExpRHS = expRHS;
 	}
+	bool nameAnalysis(SymbolTable * symTab);
 	void unparse(std::ostream& out, int indent);
 private:
 	ExpNode * myExpLHS;
@@ -473,6 +494,7 @@ public:
 	AssignStmtNode(AssignNode * assignment): StmtNode(){
 		myAssign = assignment;
 	}
+	bool nameAnalysis(SymbolTable * symTab);
 	void unparse(std::ostream& out, int indent);
 private:
 	AssignNode * myAssign;

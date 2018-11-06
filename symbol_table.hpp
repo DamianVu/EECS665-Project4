@@ -14,8 +14,13 @@ public:
 		myType = type;
 	}
 	std::string getType() { return myType; }
+	void setStructDecls(std::list<std::string> decls) {
+		structDecls = decls;
+	}
+	std::list<std::string> getStructDecls() { return structDecls; }
 private:
 	std::string myType;
+	std::list<std::string> structDecls;
 };
 
 //A single 
@@ -27,7 +32,9 @@ class ScopeTable{
 		// that the symbol does not exist within 
 		// the current scope
 		bool findByName(std::string name);
+		std::string getTypeOf(std::string id);
 		bool addItem(std::string id, std::string type);
+		bool addStruct(std::string id, std::list<std::string> list);
 		void printAll(); // Debug method
 	private:
 		std::unordered_map<std::string, SymbolTableEntry *>* map;
@@ -39,7 +46,9 @@ class SymbolTable{
 		void addScope();
 		void dropScope();
 		bool addItem(std::string id, std::string type);
+		bool addStruct(std::string id, std::list<std::string> list);
 		bool findByName(std::string name);
+		std::string getTypeOf(std::string id);
 		void reportError(std::string message);
 		void printAll(); // Debug method
 		void addLine(int lines);
@@ -52,6 +61,7 @@ class SymbolTable{
 		void invalidStructName(char f);
 	private:
 		std::list<ScopeTable *> * scopeTables;
+		ScopeTable * getTableContaining(std::string id);
 };
 
 }
